@@ -60,3 +60,7 @@ low_season_worktime = TempModificiation{
     endDate: 4,
     modifications : fromFoldable [Tuple "hours_per_week" 10]
 }
+
+-- | events may be unordered (seq num are used here. We can think of dates, hash pointers to previous events...)
+events :: Array ExperimentalEvents
+events = [contract_creation, to_half_time, low_season_worktime ]
