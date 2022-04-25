@@ -1,6 +1,6 @@
 module Events where
 
-import Prelude (class Show)
+import Prelude (class Show, (<>))
 import Data.Map (Map, keys)
 import Data.Set (Set)
 import Data.List (List, concatMap)
@@ -54,6 +54,10 @@ instance showStateModificationType :: Show StateModificationType where
 
 instance showStateModification :: Show StateModification where
   show = genericShow
+  -- show stm = case stm.eventType of
+  --               Apply -> "Apply Permanent modification on Date: " -- <> show stm.effectDate
+  --               ApplyTransient -> "Apply transient modification on Date: " 
+  --               ReleaseTransient -> "Release transient modification on Date: "
 
 -- | ----------------------------------------------------------------------------------------------------------------
 -- | V1, no checks of allowed parameters, validity of events, etc.
