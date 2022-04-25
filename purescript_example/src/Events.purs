@@ -1,12 +1,16 @@
 module Events where
 
-import Prelude (class Ord)
+import Prelude (class Ord, class Show)
 import Data.Tuple (Tuple(..))
 import Data.Map (Map, keys)
 import Data.Map as Map
 import Data.Set (Set)
 import Data.List (List, concatMap)
 import Data.List as List
+
+-- Generic derivations
+import Data.Generic.Rep (class Generic)
+import Data.Show.Generic (genericShow)
 
 -- | Events are generally indexed by their date or by a sequence number.
 -- | Any type with full order can fit.
@@ -38,6 +42,22 @@ type StateModification event_time parameter pvalues = {
 -- | V1, no checks of alloed parameters, validity of events, etc.
 -- | Dates are ints (sequence number of events), parameters key and values are Strings.
 type ExperimentalEvents = Modification Int String Int
+
+-- | Generic derivations, this is purescript/haskell boilerplate code. Leave it if you do not know why this is here. 
+derive instance genericModification :: Generic Modification
+derive instance genericStateModificationType :: Generic StateModificationType
+derive instance genericStateModification :: Generic StateModification _
+
+instance showModification :: Show  Modification a b c where
+  show = genericShow
+
+instance showStateModificationType :: Show StateModificationType where
+  show = genericShow
+
+instance showStateModification :: Show StateModification a b c where
+  show = genericShow
+
+
 
 
 -- Todo : test purescript optics
