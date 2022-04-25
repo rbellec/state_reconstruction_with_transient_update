@@ -1,9 +1,7 @@
 module Events where
 
--- import Prelude (class Ord, class Show)
-import Data.Tuple (Tuple(..))
+import Prelude (class Show)
 import Data.Map (Map, keys)
-import Data.Map as Map
 import Data.Set (Set)
 import Data.List (List, concatMap)
 import Data.List as List
@@ -20,8 +18,10 @@ type ParameterName = String
 type ParameterValue = Int
 
 -- | Permanent or temporary amendment (or modifications)
---   This type uses String & ints in order to demonstrate the feature and
---   should be made more generic once done.
+-- | This type uses String & ints in order to demonstrate the feature and
+-- | should be made more generic once done.
+-- | Dates are ints (sequence number of events), parameters key and values are Strings.
+
 data Modification = 
     PermanentModificiation  { effectDate :: EventDate 
                             , modifications :: Map ParameterName ParameterValue
@@ -33,33 +33,30 @@ data Modification =
 
 data StateModificationType = Apply | ApplyTransient | ReleaseTransient
 
-type StateModification = { 
+data StateModification = StateModificationEvent { 
       effectDate :: EventDate 
     , eventType :: StateModificationType
     , parameters :: Set ParameterName
     , sourceEvent :: Modification 
     } 
 
--- | V1, no checks of allowed parameters, validity of events, etc.
--- | Dates are ints (sequence number of events), parameters key and values are Strings.
-
-
+-- | ----------------------------------------------------------------------------------------------------------------
 -- | Generic derivations, this is purescript/haskell boilerplate code. Leave it if you do not know why this is here. 
--- derive instance genericModification :: Generic Modification
--- derive instance genericStateModificationType :: Generic StateModificationType
--- derive instance genericStateModification :: Generic StateModification 
+derive instance genericModification :: Generic Modification _
+derive instance genericStateModificationType :: Generic StateModificationType _
+derive instance genericStateModification :: Generic StateModification _ 
 
--- instance showModification :: Show  Modification where
---   show = genericShow
+instance showModification :: Show  Modification where
+  show = genericShow
 
--- instance showStateModificationType :: Show StateModificationType where
---   show = genericShow
+instance showStateModificationType :: Show StateModificationType where
+  show = genericShow
 
--- instance showStateModification :: Show StateModification where
---   show = genericShow
+instance showStateModification :: Show StateModification where
+  show = genericShow
 
-
-
+-- | ----------------------------------------------------------------------------------------------------------------
+-- | V1, no checks of allowed parameters, validity of events, etc.
 
 -- Todo : test purescript optics
 -- Todo : find `$` equiv in purescript
@@ -78,21 +75,22 @@ events_from_modification amendment =
 
         events = 
             case amendment of
-            PermanentModificiation perm -> [  
-                                                { effectDate: perm.effectDate
+            PermanentModificiation perm -> [  StateModificationEvent{ 
+                                                  effectDate: perm.effectDate
                                                 , eventType : Apply
                                                 , parameters : params
                                                 , sourceEvent : amendment
                                                 }
                                             ]  
-            TempModificiation transient -> [ 
-                                                { eventType : ApplyTransient
+            TempModificiation transient -> [  StateModificationEvent{
+                                                  eventType : ApplyTransient
                                                 , effectDate: transient.effectDate
                                                 , parameters : params
                                                 , sourceEvent : amendment
                                                 },
 
-                                                { eventType : ReleaseTransient
+                                                StateModificationEvent{ 
+                                                  eventType : ReleaseTransient
                                                 , effectDate: transient.endDate
                                                 , parameters : params
                                                 , sourceEvent : amendment
