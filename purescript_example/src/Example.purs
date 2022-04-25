@@ -3,6 +3,7 @@ module Example where
 import Events (ExperimentalEvents, Modification(..))
 import Data.Map as Map
 import Data.Tuple (Tuple(..))
+import Data.List as List
 
 -- | Tests datas. Will be moved in tests.
 
@@ -40,5 +41,5 @@ low_season_worktime = TempModificiation{
 }
 
 -- | events may be unordered (seq num are used here. We can think of dates, hash pointers to previous events...)
-events :: Array ExperimentalEvents
-events = [contract_creation, to_half_time, low_season_worktime ]
+events :: List.List ExperimentalEvents
+events = List.fromFoldable [contract_creation, to_half_time, low_season_worktime ]

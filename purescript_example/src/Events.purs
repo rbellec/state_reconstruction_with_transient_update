@@ -48,7 +48,6 @@ parameters_modified_in :: forall parameter. (Modification _ parameter _) -> Set 
 parameters_modified_in (PermanentModificiation a) = keys a.modifications
 parameters_modified_in (TempModificiation a) = keys (_.modifications a)
 
-
 -- | Create ordered list of state modifications from a single event.
 -- events_from_modification :: Modification a b c -> List StateModification a b c
 events_from_modification amendment =
