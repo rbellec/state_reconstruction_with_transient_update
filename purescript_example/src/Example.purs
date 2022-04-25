@@ -1,6 +1,6 @@
 module Example where
 
-import Events (ExperimentalEvents, Modification(..))
+import Events (Modification(..))
 import Data.Map as Map
 import Data.Tuple (Tuple(..))
 import Data.List as List
@@ -21,19 +21,19 @@ import Data.List as List
 --             hours -> 20
 
 -- initial event
-contract_creation :: ExperimentalEvents
+contract_creation :: Modification
 contract_creation = PermanentModificiation{
     effectDate : 1,
     modifications : Map.fromFoldable [Tuple "hours_per_week" 35, Tuple "days_per_week" 5]
 }
 
-to_half_time :: ExperimentalEvents
+to_half_time :: Modification
 to_half_time = PermanentModificiation{
     effectDate : 2,
     modifications : Map.fromFoldable [Tuple "hours_per_week" 20]
 }
 
-low_season_worktime :: ExperimentalEvents
+low_season_worktime :: Modification
 low_season_worktime = TempModificiation{
     effectDate : 3,
     endDate: 4,
@@ -41,5 +41,5 @@ low_season_worktime = TempModificiation{
 }
 
 -- | events may be unordered (seq num are used here. We can think of dates, hash pointers to previous events...)
-events :: List.List ExperimentalEvents
+events :: List.List Modification
 events = List.fromFoldable [contract_creation, to_half_time, low_season_worktime ]

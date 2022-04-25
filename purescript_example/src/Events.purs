@@ -1,6 +1,6 @@
 module Events where
 
-import Prelude (class Ord, class Show)
+-- import Prelude (class Ord, class Show)
 import Data.Tuple (Tuple(..))
 import Data.Map (Map, keys)
 import Data.Map as Map
@@ -13,49 +13,50 @@ import Data.Generic.Rep (class Generic)
 import Data.Show.Generic (genericShow)
 
 -- | Events are generally indexed by their date or by a sequence number.
--- | Any type with full order can fit.
-type EventTime a = (Ord a) => a
+-- | Any type with full order can fit. This version is simplified to use Ints
 
--- | Parameters are 
--- | Any type with full order can fit.
-type Parameter = String
+type EventDate = Int
+type ParameterName = String
+type ParameterValue = Int
 
 -- | Permanent or temporary amendment (or modifications)
-data Modification event_time parameter pvalues = 
-    PermanentModificiation  { effectDate :: event_time 
-                            , modifications :: Map parameter pvalues
+--   This type uses String & ints in order to demonstrate the feature and
+--   should be made more generic once done.
+data Modification = 
+    PermanentModificiation  { effectDate :: EventDate 
+                            , modifications :: Map ParameterName ParameterValue
                             } 
-    | TempModificiation     { effectDate :: event_time 
-                            , endDate :: event_time
-                            , modifications :: Map parameter pvalues
+    | TempModificiation     { effectDate :: EventDate 
+                            , endDate :: EventDate
+                            , modifications :: Map ParameterName ParameterValue
                             }
 
 data StateModificationType = Apply | ApplyTransient | ReleaseTransient
 
-type StateModification event_time parameter pvalues = { 
-      effectDate :: event_time 
+type StateModification = { 
+      effectDate :: EventDate 
     , eventType :: StateModificationType
-    , parameters :: Set parameter
-    , sourceEvent :: Modification event_time parameter pvalues
+    , parameters :: Set ParameterName
+    , sourceEvent :: Modification 
     } 
 
--- | V1, no checks of alloed parameters, validity of events, etc.
+-- | V1, no checks of allowed parameters, validity of events, etc.
 -- | Dates are ints (sequence number of events), parameters key and values are Strings.
-type ExperimentalEvents = Modification Int String Int
+
 
 -- | Generic derivations, this is purescript/haskell boilerplate code. Leave it if you do not know why this is here. 
-derive instance genericModification :: Generic Modification
-derive instance genericStateModificationType :: Generic StateModificationType
-derive instance genericStateModification :: Generic StateModification _
+-- derive instance genericModification :: Generic Modification
+-- derive instance genericStateModificationType :: Generic StateModificationType
+-- derive instance genericStateModification :: Generic StateModification 
 
-instance showModification :: Show  Modification a b c where
-  show = genericShow
+-- instance showModification :: Show  Modification where
+--   show = genericShow
 
-instance showStateModificationType :: Show StateModificationType where
-  show = genericShow
+-- instance showStateModificationType :: Show StateModificationType where
+--   show = genericShow
 
-instance showStateModification :: Show StateModification a b c where
-  show = genericShow
+-- instance showStateModification :: Show StateModification where
+--   show = genericShow
 
 
 
@@ -64,7 +65,7 @@ instance showStateModification :: Show StateModification a b c where
 -- Todo : find `$` equiv in purescript
 -- Todo : explicit multiple syntax tested here to explain this part of purescript.
 -- parameters_modified_in :: forall a b parameter. (Modification a parameter b) -> Set parameter
-parameters_modified_in :: forall parameter. (Modification _ parameter _) -> Set parameter
+parameters_modified_in :: Modification -> Set ParameterName
 parameters_modified_in (PermanentModificiation a) = keys a.modifications
 parameters_modified_in (TempModificiation a) = keys (_.modifications a)
 
