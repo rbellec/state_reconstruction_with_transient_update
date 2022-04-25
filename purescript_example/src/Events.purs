@@ -71,6 +71,7 @@ parameters_modified_in (TempModificiation a) = keys (_.modifications a)
 
 -- | Create ordered list of state modifications from a single event.
 -- events_from_modification :: Modification a b c -> List StateModification a b c
+events_from_modification ∷ Modification → List StateModification
 events_from_modification amendment =
     let 
         params = parameters_modified_in amendment
@@ -101,6 +102,7 @@ events_from_modification amendment =
     List.fromFoldable events
 
 -- | 
+state_modifications_from ∷ List Modification → List StateModification
 state_modifications_from = concatMap events_from_modification 
     
 
