@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "spago": "^0.20.8"
+  }
+}
