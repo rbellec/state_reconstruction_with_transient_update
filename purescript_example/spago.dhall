@@ -15,7 +15,6 @@ to generate this file without the comments in this block.
   [ "console"
   , "effect"
   , "foreign-object"
-  , "interpolate"
   , "lists"
   , "ordered-collections"
   , "prelude"
